@@ -13,8 +13,10 @@ class DevStack():
         self.stack_status = {}
         self.stack_mode_status = {}
         self.stack_toggle_status = {}
+        self.shared_config = {}
         self.initialize_logger()
         self.initialize_stack_table()
+        self.registry_logs = []
 
     def initialize_logger(self, loglevel='INFO'):
         logging.basicConfig(
@@ -30,9 +32,14 @@ class DevStack():
             self.stack_table.justify_columns[i] = 'center'
         self.stack_table.inner_row_border = True
 
+    def add_prop(self, prop_cls):
+        prop_object = prop_cls()
+        self.registry_logs.append(f'{"Registering Prop":18}: {prop_cls.__name__:>15} ─> {prop_object}')
+        self.shared_config[prop_object.name] = prop_object.values
+
     def add_layer(self, layer_cls):
         layer_object = layer_cls()
-        self.logger.info(f'Registering Layer: {layer_cls.__name__} \t {layer_object}')
+        self.registry_logs.append(f'{"Registering Layer":18}: {layer_cls.__name__:>15} ─> {layer_object}')
         # print(f'Depends_on: {layer_object.depends_on}')
         self.registered_layers[layer_cls.__name__] = layer_object
         if hasattr(layer_object, 'depends_on') is not False:
@@ -42,10 +49,9 @@ class DevStack():
 
     def add_mode(self, mode_cls):
         mode_object = mode_cls()
-        self.logger.info(f'Registering Mode: {mode_cls.__name__} \t {mode_object}')
-        for k, v in mode_object.prepare_modes().items():
-            self.registered_modes[k] = v
-            self.stack_mode_status[k] = v
+        self.registry_logs.append(f'{"Registering Mode":18}: {mode_cls.__name__:>15} ─> {mode_object}')
+        self.registered_modes[mode_object.name] = mode_object 
+        self.stack_mode_status[mode_object.name] = mode_object.default
 
     def __order(self, arg):
         '''
@@ -168,24 +174,37 @@ class DevStack():
 
     def deploy(self, loglevel="INFO", name='DEFAULT'):
         self.name = name
-        print(loglevel)
         logging.getLogger().setLevel(loglevel)
+
+        self.logger.debug('\n\t' + '\n\t'.join(self.registry_logs) + '\n')
 
         self.stack_table.title = self.name + ' Stack'
         order = self.resolve()
+
+        for layer in order:
+            self.shared_config[layer] = self.registered_layers[layer].shared_config()
+
+        for layer in order:
+            self.registered_layers[layer].prop_init()
+
+        # print(logging.getLogger().isEnabledFor(logging.DEBUG))
+        if not logging.getLogger().isEnabledFor(logging.DEBUG):
+            clear_screen()
 
         enabled = self.prompt_toggles(order)['enabled']
         self.show_stack()
 
         for layer in order:
             if layer is not None and layer in enabled:
-                self.update_stack_status(layer, symbol='...', status='🤞 Executing')
-                ret_code = self.registered_layers[layer].execute()
+                self.update_stack_status(layer, symbol='...', status='🤞 Deploying Layer')
+                ret_code = self.registered_layers[layer].deploy()
 
                 if ret_code == 0:
-                    self.update_stack_status(layer, symbol="✔", status='👍 Deployed')
-                else:
+                    self.update_stack_status(layer, symbol="✔", status='👍 Layer is up.')
+                elif ret_code < 0:
                     self.update_stack_status(layer, symbol="❌", status="👎 Failed")
+                else:
+                    self.update_stack_status(layer, symbol="✔", status="Complete")
                     
 
 devstack = DevStack()
