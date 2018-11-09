@@ -1,2 +1,9 @@
-# devstack
-A Framework for deploying Development Stacks easily.
+# DevStack
+A Micro Framework for Development Stacks.
+
+### Requirements
+
+Use `pip install` to install the following:-
+
+* `terminaltables`
+* `pyinquirer`
