@@ -50,6 +50,9 @@ class DevStack():
     Methods
     -------
     deploy()
+        Deploys the layers of the stack in topological ordering of their respective dependencies according to the preferences decided by the user (toggles and modes)
+    
+
         
     """
 
@@ -244,6 +247,16 @@ class DevStack():
         self.logger.info(f'Writing to config: .{self.name}.json')
 
     def deploy(self, loglevel="INFO", name='DEFAULT'):
+        """Deploys the layers of the stack in tolopogical ordering of their corresponding dependencies.
+
+        Parameters
+        ----------
+        loglevel: str
+            Sets the verbosity for logger interface
+        
+        name: str
+            Sets the name for the DevStack
+        """
         self.name = name  # Initialize name
         logging.getLogger().setLevel(
             loglevel)  # Set log level to the user defined choice
