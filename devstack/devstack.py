@@ -284,6 +284,7 @@ class DevStack():
         enabled = self.prompt_toggles(
             order
         )['enabled']  # Get a list of Layer names which the user has enabled as input.
+
         self.show_stack()  # Print the current stack.
 
         for layer in order:  # For each layer in the topological ordreing of the layers
