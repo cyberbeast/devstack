@@ -78,7 +78,7 @@ class DevStack():
             __name__)  # Define a logging interface for the Deployment class.
 
     def __initialize_stack_table(self):
-        self.stack = [['LAYER', ' ', 'STATUS']]
+        self.stack = [[' ', 'LAYER', 'STATUS', ' ']]
         self.stack_table = SingleTable(self.stack)
         for i in range(1, 3):
             self.stack_table.justify_columns[i] = 'center'
@@ -137,12 +137,13 @@ class DevStack():
             d = dict(((k, v - t) for k, v in d.items() if v))
         for layer in r:
             self.stack_status[layer] = {
-                'key': layer,
                 'symbol': "◌",
+                'key': layer,
                 'status': "-"
             }
             self.stack.append(
                 [element for element in self.stack_status[layer].values()])
+            print(self.stack)
         return r
 
     def prompt_toggles(self, layer_ordered):
@@ -176,7 +177,6 @@ class DevStack():
 
         answers = prompt(questions)
         enabled_options = answers['enabled'].copy()
-        print(f"RESRES {enabled_options}")
         for option in enabled_options:
             if option in self.registered_modes.keys():
                 self.stack_mode_status[option] = True
@@ -203,23 +203,31 @@ class DevStack():
         clear_screen()
         print(self.stack_table.table)
 
-    def update_stack_status(self, layer, symbol=None, status=None):
+    def update_stack_status(self,
+                            layer,
+                            symbol=None,
+                            status=None,
+                            additional=[]):
+
         if layer not in self.stack_status.keys():
             self.stack_status[layer] = {}
 
         if symbol is not None:
-            self.stack_status[layer]['symbol'] = symbol
+            self.stack_status[layer]['symbol'] = f'{symbol:^3}'
 
         if status is not None:
-            self.stack_status[layer]['status'] = status
+            self.stack_status[layer]['status'] = f'{status:^50}'
 
-        # print(self.stack)
         for idx in range(1, len(self.stack)):
-            if self.stack[idx][0] == layer:
+            if self.stack[idx][1] == layer:
+                if len(additional) >= 1:
+                    more = [element for element in additional]
+                else:
+                    more = self.stack[idx][3:]
                 self.stack[idx] = [
-                    layer, self.stack_status[layer]['symbol'],
+                    self.stack_status[layer]['symbol'], layer,
                     self.stack_status[layer]['status']
-                ]
+                ] + more
         self.show_stack()
 
     def load_config(self):
@@ -293,18 +301,18 @@ class DevStack():
         for layer in order:  # For each layer in the topological ordreing of the layers
             if layer is not None and layer in enabled:  # If the layer is enabled
                 self.update_stack_status(
-                    layer, symbol='...', status='🤞 Deploying Layer'
+                    layer, symbol='...', status=' 🤞 Deploying Layer'
                 )  # Update status to reflect that it is being processed.
                 ret_code = self.registered_layers[layer].deploy(
                 )  # Call the layer's deploy method and await the return code
 
                 if ret_code == 0:  # If return code is 0 (deploy method executed without errors)
                     self.update_stack_status(
-                        layer, symbol="✔", status='👍 Layer is up.'
+                        layer, symbol="✔", status=' 👍 Layer is up.'
                     )  # Then update the layer status to reflect that the layer is up.
                 elif ret_code < 0:  # Else if the return code is negative (deploy method returned errors)
                     self.update_stack_status(
-                        layer, symbol="❌", status="👎 Failed"
+                        layer, symbol="❌", status=" 👎 Failed"
                     )  # Then update the layer status to reflect that the process failed.
                 else:  # In all other cases
                     self.update_stack_status(
