@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="devstack",
-    version="0.1.6",
+    version="0.1.7",
     author="Sandesh Gade",
     author_email="sandeshgade@gmail.com",
     description="A Micro Framework for Development Stacks",
