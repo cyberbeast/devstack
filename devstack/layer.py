@@ -12,7 +12,7 @@ class Registry(type):
         }
 
         required_methods = {
-            'Layer': ['deploy', 'destroy', 'shared_config'],
+            'Layer': ['deploy', 'destroy', 'shared_config', 'prop_init'],
             'Mode': ['default'],
             'Prop': ['name', 'values']
         }
@@ -23,16 +23,25 @@ class Registry(type):
         if superclasses:
             # print((superclasses[0].__name__))
             required_methods = required_methods[superclasses[0].__name__]
-            if not all(key in attributedict.keys() for key in required_methods):
-                print(f'{clsname} does not contain either {" or ".join(required_methods)}')
+            if not all(key in attributedict.keys()
+                       for key in required_methods):
+                print(
+                    f'{clsname} does not contain either {" or ".join(required_methods)} method(s).'
+                )
                 sys.exit(-2)
             registry_methods[superclasses[0].__name__](newclass)
 
         return newclass
 
+
 class Layer(metaclass=Registry):
-    def run_cmd(self, command, logger, continue_on_error=True, return_string=False):
-        process = Popen(command, bufsize=0, stdout=PIPE, stderr=STDOUT, shell=True)
+    def run_cmd(self,
+                command,
+                logger,
+                continue_on_error=True,
+                return_string=False):
+        process = Popen(
+            command, bufsize=0, stdout=PIPE, stderr=STDOUT, shell=True)
 
         if not return_string:
             logger.info(command)
@@ -40,7 +49,7 @@ class Layer(metaclass=Registry):
                 line = process.stdout.readline().rstrip().decode('utf-8')
                 if not line:
                     process.stdout.close()
-                    break;
+                    break
                 if line.lower().startswith('error'):
                     logger.error(line)
                 else:
@@ -54,8 +63,10 @@ class Layer(metaclass=Registry):
         else:
             return process.communicate()[0].decode('utf-8')
 
+
 class Mode(metaclass=Registry):
     pass
+
 
 class Prop(metaclass=Registry):
     pass

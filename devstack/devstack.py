@@ -246,6 +246,9 @@ class DevStack():
             json.dump(temp, f)
         self.logger.info(f'Writing to config: .{self.name}.json')
 
+    def destroy(self):
+        pass
+
     def deploy(self, loglevel="INFO", name='DEFAULT'):
         """Deploys the layers of the stack in tolopogical ordering of their corresponding dependencies.
 
