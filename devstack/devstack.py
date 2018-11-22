@@ -78,7 +78,7 @@ class DevStack():
             __name__)  # Define a logging interface for the Deployment class.
 
     def __initialize_stack_table(self):
-        self.stack = [[' ', 'LAYER', 'STATUS', ' ']]
+        self.stack = [[' ', 'LAYER', 'STATUS']]
         self.stack_table = SingleTable(self.stack)
         for i in range(1, 3):
             self.stack_table.justify_columns[i] = 'center'
