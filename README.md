@@ -25,9 +25,10 @@ I will move the package to PyPI's production ready index when I complete a stabl
 ## To-do
 
  - [x] Publish to PyPI's test index
- - [ ] Inline comments (Code level documentation)
+ - [x] Inline comments for deploy method (Code level documentation)
  - [ ] Documentation & API Reference
- - [ ] Examples
+ - [x] Example directory with at least one example
+ - [ ] More examples
 
 ## Framework Architecture
 
