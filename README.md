@@ -14,16 +14,6 @@ I am working on a project at work to automate our stack deployment down to a "si
 * **Monitor** - Always keep the developer informed of the state of the stack.
 
 
-
-
-## Requirements
-
-Use `pip install` to install the following:-
-
-* `terminaltables`
-* `pyinquirer`
-
-
 ## Installation
 
 ```
