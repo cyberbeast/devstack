@@ -32,6 +32,13 @@ pip install -i https://test.pypi.org/simple/ devstack
 
 I will move the package to PyPI's production ready index when I complete a stable build.
 
+## To-do
+
+ - [x] Publish to PyPI's test index
+ - [ ] Inline comments (Code level documentation)
+ - [ ] Documentation & API Reference
+ - [ ] Examples
+
 ## Framework Architecture
 
 ![Framework Architecture](https://www.lucidchart.com/publicSegments/view/99579cc8-7b9a-4622-9797-25576a25a189/image.png)
