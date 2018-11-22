@@ -12,6 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/cyberbeast/devstack",
+    install_requires=["terminaltables", "pyinquirer"],
     packages=['devstack'],
     install_requires=['pyinquirer', 'terminaltables'],
     classifiers=[
