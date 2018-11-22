@@ -14,7 +14,6 @@ setuptools.setup(
     url="https://github.com/cyberbeast/devstack",
     install_requires=["terminaltables", "pyinquirer"],
     packages=['devstack'],
-    install_requires=['pyinquirer', 'terminaltables'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
